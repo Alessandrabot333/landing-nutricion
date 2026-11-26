@@ -132,35 +132,82 @@ footer{padding:28px;text-align:center;font-size:.82rem;color:#555}footer a{color
 
 <a class="wa" id="wa-float" href="#" target="_blank" rel="noopener" aria-label="Escribir por WhatsApp"><svg viewBox="0 0 24 24"><path d="M12 2a10 10 0 0 0-8.6 15.1L2 22l5-1.3A10 10 0 1 0 12 2zm5.3 14.2c-.2.6-1.300 1.200-1.800 1.200-.5.100-1 .2-3.300-.7-2.800-1.200-4.600-4-4.700-4.200-.1-.2-1.100-1.500-1.100-2.800s.7-2 1-2.300c.2-.3.500-.3.700-.3h.5c.2 0 .4 0 .6.500l.8 2c.1.2.1.400 0 .6l-.4.600-.3.400c-.1.200-.3.300-.1.600.2.300.8 1.300 1.700 2.100 1.200 1 2.200 1.300 2.500 1.500.3.100.5.100.6-.1l.9-1.100c.2-.3.400-.2.700-.1l1.900.9c.3.100.5.200.5.400.1.200.1.800-.1 1.400z"/></svg></a>
 
+
 <script>
-/* ===== CONFIGURACIÓN (rellenar) ===== */
 const CFG={
   WHATSAPP:"34674803960",
   WA_TEXTO:"Hola, Alessandra. He visitado tu página y me gustaría recibir información sobre tus servicios.",
   URL_EBOOK:"https://script.google.com/macros/s/AKfycbw9vGOQRw6V4hxj5E3J9u_iUuiQwGLfJkMI9aRGW3VXAGmCc7vnPjyk4ZvADhEbH6Gx/exec?tipo=ebook",
   URL_RESERVA:"https://script.google.com/macros/s/AKfycbw9vGOQRw6V4hxj5E3J9u_iUuiQwGLfJkMI9aRGW3VXAGmCc7vnPjyk4ZvADhEbH6Gx/exec?tipo=consulta"
 };
+
 const wa="https://wa.me/"+CFG.WHATSAPP+"?text="+encodeURIComponent(CFG.WA_TEXTO);
-document.getElementById("wa-main").href=wa;document.getElementById("wa-float").href=wa;
-document.getElementById("yr").textContent=new Date().getFullYear();
-document.querySelectorAll("[data-svc]").forEach(a=>a.addEventListener("click",()=>{document.getElementById("svc").value=a.dataset.svc}));
+
+const waMain=document.getElementById("wa-main");
+const waFloat=document.getElementById("wa-float");
+if(waMain) waMain.href=wa;
+if(waFloat) waFloat.href=wa;
+
+const yr=document.getElementById("yr");
+if(yr) yr.textContent=new Date().getFullYear();
+
+document.querySelectorAll("[data-svc]").forEach(a=>{
+  a.addEventListener("click",()=>{
+    const svc=document.getElementById("svc");
+    if(svc) svc.value=a.dataset.svc;
+  });
+});
+
 function bind(id,url,ok){
-  const f=document.getElementById(id),m=f.querySelector(".msg"),b=f.querySelector("button");
+  const f=document.getElementById(id);
+  if(!f) return;
+
+  const m=f.querySelector(".msg");
+  const b=f.querySelector("button");
+  if(!m || !b) return;
+
   f.addEventListener("submit",async e=>{
-    e.preventDefault();m.style.display="block";
-    if(f.web.value)return;
-    if(!f.checkValidity()){m.textContent="Por favor, completa los campos obligatorios y acepta la política de privacidad.";return}
-    if(url.startsWith("URL_")){m.textContent="Formulario pendiente de conectar (falta la URL de Google Apps Script).";return}
-    b.disabled=true;const d=new URLSearchParams(new FormData(f));d.delete("web");
-    try{await fetch(url,{method:"POST",mode:"no-cors",body:d});f.reset();m.textContent=ok}
-    catch(_){m.textContent="No se ha podido enviar. Inténtalo de nuevo o escríbeme por WhatsApp."}
+    e.preventDefault();
+    m.style.display="block";
+
+    if(f.elements.namedItem("web")?.value) return;
+
+    if(!f.checkValidity()){
+      m.textContent="Por favor, completa los campos obligatorios y acepta la política de privacidad.";
+      f.reportValidity();
+      return;
+    }
+
+    b.disabled=true;
+    const d=new URLSearchParams(new FormData(f));
+    d.delete("web");
+
+    try{
+      await fetch(url,{method:"POST",mode:"no-cors",body:d});
+      f.reset();
+      m.textContent=ok;
+    }catch(error){
+      m.textContent="No se ha podido enviar. Inténtalo de nuevo o escríbeme por WhatsApp.";
+    }
+
     b.disabled=false;
   });
 }
+
 bind("f-ebook",CFG.URL_EBOOK,"¡Gracias! Te enviaré la guía a tu correo. Revisa también la carpeta de spam.");
 bind("f-reserva",CFG.URL_RESERVA,"Gracias, he recibido tu solicitud. Te contactaré para coordinar tu cita. Recuerda que aún no está confirmada.");
-const io=new IntersectionObserver(es=>es.forEach(e=>{if(e.isIntersecting){e.target.classList.add("on");io.unobserve(e.target)}}),{threshold:.12});
+
+const io=new IntersectionObserver(es=>{
+  es.forEach(e=>{
+    if(e.isIntersecting){
+      e.target.classList.add("on");
+      io.unobserve(e.target);
+    }
+  });
+},{threshold:.12});
+
 document.querySelectorAll(".rv").forEach(el=>io.observe(el));
 </script>
+
 </body>
 </html>
