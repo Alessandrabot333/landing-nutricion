@@ -135,10 +135,10 @@ footer{padding:28px;text-align:center;font-size:.82rem;color:#555}footer a{color
 <script>
 /* ===== CONFIGURACIÓN (rellenar) ===== */
 const CFG={
-  WHATSAPP:"WHATSAPP_NUMERO_CON_PREFIJO", // ej.: 34600111222 (sin + ni espacios)
-  WA_TEXTO:"Hola Alessandra, tengo una duda sobre tus servicios de nutrición.",
-  URL_EBOOK:"URL_APPS_SCRIPT_EBOOK",      // URL de la app web de Google Apps Script
-  URL_RESERVA:"URL_APPS_SCRIPT_RESERVA"
+  WHATSAPP:"34674803960",
+  WA_TEXTO:"Hola, Alessandra. He visitado tu página y me gustaría recibir información sobre tus servicios.",
+  URL_EBOOK:"https://script.google.com/macros/s/AKfycbw9vGOQRw6V4hxj5E3J9u_iUuiQwGLfJkMI9aRGW3VXAGmCc7vnPjyk4ZvADhEbH6Gx/exec?tipo=ebook",
+  URL_RESERVA:"https://script.google.com/macros/s/AKfycbw9vGOQRw6V4hxj5E3J9u_iUuiQwGLfJkMI9aRGW3VXAGmCc7vnPjyk4ZvADhEbH6Gx/exec?tipo=consulta"
 };
 const wa="https://wa.me/"+CFG.WHATSAPP+"?text="+encodeURIComponent(CFG.WA_TEXTO);
 document.getElementById("wa-main").href=wa;document.getElementById("wa-float").href=wa;
